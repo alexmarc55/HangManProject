@@ -16,10 +16,10 @@ def initialize_board(rows, cols):
     return board
 
 
-# Detecting 3 in a row
+
 def detect_three_in_a_row(board):
     score = 0
-    to_remove = set()  # we put all the sets that needs to be removed
+    to_remove = set()
 
     for i in range(ROWS): #horizontal check
         for j in range(COLS - 2):
@@ -39,8 +39,121 @@ def detect_three_in_a_row(board):
 
     return score, to_remove
 
+def detect_four_in_a_row(board):
+    score = 0
+    to_remove = set()
 
-#updating the board
+    # Horizontal
+    for i in range(ROWS):
+        for j in range(COLS - 3):
+            if board[i][j] == board[i][j + 1] == board[i][j + 2] == board[i][j + 3] != 0:
+                to_remove.update([(i, j), (i, j + 1), (i, j + 2), (i, j + 3)])
+                score += 10
+
+    # Vertical
+    for j in range(COLS):
+        for i in range(ROWS - 3):
+            if board[i][j] == board[i + 1][j] == board[i + 2][j] == board[i + 3][j] != 0:
+                to_remove.update([(i, j), (i + 1, j), (i + 2, j), (i + 3, j)])
+                score += 10
+
+    return score, to_remove
+
+
+def detect_five_in_a_row(board):
+    score = 0
+    to_remove = set()
+
+    # Horizontal
+    for i in range(ROWS):
+        for j in range(COLS - 4):
+            if board[i][j] == board[i][j + 1] == board[i][j + 2] == board[i][j + 3] == board[i][j + 4] != 0:
+                to_remove.update([(i, j), (i, j + 1), (i, j + 2), (i, j + 3), (i, j + 4)])
+                score += 50
+
+    # Vertical
+    for j in range(COLS):
+        for i in range(ROWS - 4):
+            if board[i][j] == board[i + 1][j] == board[i + 2][j] == board[i + 3][j] == board[i + 4][j] != 0:
+                to_remove.update([(i, j), (i + 1, j), (i + 2, j), (i + 3, j), (i + 4, j)])
+                score += 50
+
+    return score, to_remove
+
+
+def detect_l_shape(board):
+    score = 0
+    to_remove = set()
+
+    for i in range(ROWS - 2):
+        for j in range(COLS - 2):
+            if board[i][j] != 0:
+                if (board[i][j] == board[i + 1][j] == board[i + 2][j] == board[i + 2][j + 1] == board[i + 2][j + 2]):
+                    to_remove.update([(i, j), (i + 1, j), (i + 2, j), (i + 2, j + 1), (i + 2, j + 2)])
+                    score += 20
+                elif (board[i][j] == board[i + 1][j] == board[i + 2][j] == board[i + 2][j - 1] == board[i + 2][j - 2]):
+                    to_remove.update([(i, j), (i + 1, j), (i + 2, j), (i + 2, j - 1), (i + 2, j - 2)])
+                    score += 20
+                elif (board[i][j] == board[i][j + 1] == board[i][j + 2] == board[i + 1][j + 2] == board[i + 2][j + 2]):
+                    to_remove.update([(i, j), (i, j + 1), (i, j + 2), (i + 1, j + 2), (i + 2, j + 2)])
+                    score += 20
+                elif (board[i][j] == board[i][j + 1] == board[i][j + 2] == board[i + 1][j] == board[i + 2][j]):
+                    to_remove.update([(i, j), (i, j + 1), (i, j + 2), (i + 1, j), (i + 2, j)])
+                    score += 20
+
+    return score, to_remove
+
+def detect_t_shape(board):
+    score = 0
+    to_remove = set()
+
+    for i in range(ROWS - 2):
+        for j in range(COLS - 2):
+            if board[i][j] != 0:
+                if (board[i][j] == board[i][j + 1] == board[i][j + 2] == board[i + 1][j + 1] == board[i + 2][j + 1]):
+                    to_remove.update([(i, j), (i, j + 1), (i, j + 2), (i + 1, j + 1), (i + 2, j + 1)])
+                    score += 30
+                elif (board[i][j + 1] == board[i + 1][j + 1] == board[i + 2][j + 1] == board[i + 2][j] == board[i + 2][j + 2]):
+                    to_remove.update([(i, j + 1), (i + 1, j + 1), (i + 2, j + 1), (i + 2, j), (i + 2, j + 2)])
+                    score += 30
+                elif (board[i][j] == board[i + 1][j] == board[i + 2][j] == board[i + 1][j + 1] == board[i + 1][j + 2]):
+                    to_remove.update([(i, j), (i + 1, j), (i + 2, j), (i + 1, j + 1), (i + 1, j + 2)])
+                    score += 30
+                elif (board[i + 1][j] == board[i + 1][j + 1] == board[i + 1][j + 2] == board[i][j + 1] == board[i + 2][j + 1]):
+                    to_remove.update([(i + 1, j), (i + 1, j + 1), (i + 1, j + 2), (i, j + 1), (i + 2, j + 1)])
+                    score += 30
+
+    return score, to_remove
+
+def detect_patterns(board):
+    total_score = 0
+    all_to_remove = set()
+
+    score, to_remove = detect_five_in_a_row(board)
+    total_score += score
+    all_to_remove.update(to_remove)
+
+    score, to_remove = detect_t_shape(board)
+    total_score += score
+    all_to_remove.update(to_remove)
+
+    score, to_remove = detect_l_shape(board)
+    total_score += score
+    all_to_remove.update(to_remove)
+
+    score, to_remove = detect_four_in_a_row(board)
+    total_score += score
+    all_to_remove.update(to_remove)
+
+    score, to_remove = detect_three_in_a_row(board)
+    total_score += score
+    all_to_remove.update(to_remove)
+
+    for (i, j) in all_to_remove:
+        board[i][j] = 0
+
+    return total_score, all_to_remove
+
 def update_board(board):
     for j in range(COLS):
         #from bottom to the top
@@ -63,6 +176,36 @@ def print_board(board):
     print("-" * 40)
 
 
+def find_possible_moves(board):
+    for i in range(ROWS):
+        for j in range(COLS):
+            if j < COLS - 1:
+                board[i][j], board[i][j + 1] = board[i][j + 1], board[i][j]  # Swap
+                if has_new_match(board):  # Check if this swap creates a new formation
+                    return (i, j), (i, j + 1)
+                board[i][j], board[i][j + 1] = board[i][j + 1], board[i][j]  # Swap back
+
+            # Swap with bottom neighbor if within bounds
+            if i < ROWS - 1:
+                board[i][j], board[i + 1][j] = board[i + 1][j], board[i][j]  # Swap
+                if has_new_match(board):  # Check if this swap creates a new formation
+                    return (i, j), (i + 1, j)  # Return swap coordinates as a possible move
+                board[i][j], board[i + 1][j] = board[i + 1][j], board[i][j]  # Swap back
+
+    return None  # No possible moves found
+
+
+# check if a new match is created
+def has_new_match(board):
+    # check if any scoring patterns are found after a swap
+    fscore, _ = detect_four_in_a_row(board)
+    fivescore, _ = detect_five_in_a_row(board)
+    score, _ = detect_three_in_a_row(board)
+    l_score, _ = detect_l_shape(board)
+    t_score, _ = detect_t_shape(board)
+
+    return score > 0 or l_score > 0 or t_score > 0 or fscore > 0 or fivescore > 0
+
 
 def play_game():
     board = initialize_board(ROWS, COLS)
@@ -72,28 +215,51 @@ def play_game():
     print("Initial board:")
     print_board(board)
 
-    while steps < 10000:
-        score, removed = detect_three_in_a_row(board)
-        if not removed:
-            break
-        total_score += score
-        update_board(board)
+    while total_score < 10000:
+        score, removed = detect_patterns(board)
+        if removed:
+            total_score += score
+            update_board(board)
+            #print(f"\nAfter step {steps + 1}, score: {total_score}")
+            #print_board(board)
+            steps += 1
+        else:
+            # If no matches, find possible moves
+            swap_move = find_possible_moves(board)
+            if swap_move:
+                (i1, j1), (i2, j2) = swap_move
+                # Perform the swap to try to create a new match
+                board[i1][j1], board[i2][j2] = board[i2][j2], board[i1][j1]
 
-        print(f"\nAfter step {steps + 1}, score: {total_score}")
-        print_board(board)
+                # Check if the swap created a match
+                new_score, new_removed = detect_patterns(board)
+                if new_removed:
+                    total_score += new_score
+                    update_board(board)
+                    #print(f"\nAfter swap step, score: {total_score}")
+                    #print_board(board)
+                else:
+                    # If no new matches, swap back
+                    board[i1][j1], board[i2][j2] = board[i2][j2], board[i1][j1]
+            else:
+                print("\nNo more possible moves, ending game.")
+                break
 
-        steps += 1
 
-    return total_score
+    return total_score,steps
 def simulate_games(num_games=100):
     scores=[]
+    moves_list = []
     for i in range(num_games):
-        score = play_game()
+        score, moves = play_game()
         scores.append(score)
-        print(f"Game {i + 1} reached a {score} score!")
+        moves_list.append(moves)
+        print(f"Game {i + 1} reached a score of {score} in {moves} moves!")
 
     avg_score = sum(scores) / num_games
-    print(f"\nAverage score {avg_score}")
+    avg_moves = sum(moves_list) / num_games
+    print(f"\nAverage score: {avg_score}")
+    print(f"Average moves per game: {avg_moves}")
 
 
 if __name__ == "__main__":
