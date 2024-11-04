@@ -176,19 +176,19 @@ def find_possible_moves(board):
     for i in range(ROWS):
         for j in range(COLS):
             if j < COLS - 1:
-                board[i][j], board[i][j + 1] = board[i][j + 1], board[i][j]  # Swap
-                if has_new_match(board):  # Check if this swap creates a new formation
+                board[i][j], board[i][j + 1] = board[i][j + 1], board[i][j]
+                if has_new_match(board): 
                     return (i, j), (i, j + 1)
                 board[i][j], board[i][j + 1] = board[i][j + 1], board[i][j]  # Swap back
 
             # Swap with bottom neighbor if within bounds
             if i < ROWS - 1:
                 board[i][j], board[i + 1][j] = board[i + 1][j], board[i][j]  # Swap
-                if has_new_match(board):  # Check if this swap creates a new formation
-                    return (i, j), (i + 1, j)  # Return swap coordinates as a possible move
+                if has_new_match(board): 
+                    return (i, j), (i + 1, j)  
                 board[i][j], board[i + 1][j] = board[i + 1][j], board[i][j]  # Swap back
 
-    return None  # No possible moves found
+    return None
 
 
 # check if a new match is created
